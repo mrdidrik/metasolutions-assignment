@@ -5,8 +5,8 @@ Shows a (Bootstrap) card based UI showing the fetched Pieces of Art with their i
 
 ## Installation
 
-- `git clone git@github.com:mrdidrik/upg.git`
-- cd upg
+- `git clone git@github.com:mrdidrik/metasolutions-assignment.git`
+- cd metasolutions-assignment
 - npm install
 - npm start
 - visit `http://localhost:8080/`
