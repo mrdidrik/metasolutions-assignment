@@ -56,7 +56,7 @@ function PieceOfArt(props) {
 }
 
 function App() {
-  const [items, setItems] = useState();
+  const [items, setItems] = useState([]);
 
   const pieceOfArtType = "http://example.com/PieceOfArt";
 
@@ -76,9 +76,7 @@ function App() {
         var searchList = es.newSolrQuery().context(es_config.context).rdfType(pieceOfArtType).list();
         const results = await searchList.getEntries();
         setItems(results.map((result) => {
-
-          var proj = result.projection(pieceOfArtProjection);
-          return <PieceOfArt key={proj.title} imgSrc={proj.imgSrc} title={proj.title} artist={proj.artist} description={proj.description} />
+          return result.projection(pieceOfArtProjection);
         }));
       } catch (error) {
         console.log(error);
@@ -88,5 +86,7 @@ function App() {
     fetchData();
   }, []);
 
-  return <div className="card-group">{items}</div>
+  return <div className="card-group">{items.map((proj) => {
+    return <PieceOfArt key={proj.title} imgSrc={proj.imgSrc} title={proj.title} artist={proj.artist} description={proj.description} />
+  })}</div>
 }
