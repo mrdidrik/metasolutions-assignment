@@ -13,7 +13,6 @@ ReactDOM.render(
   document.getElementById('app')
 );
 
-// Fetches the artist name and displays it
 function Artist(props) {
   const [givenName, setGivenName] = useState();
   const [familyName, setFamilyName] = useState();
@@ -39,7 +38,6 @@ function Artist(props) {
   );
 }
 
-// Shows a piece of art with image and info
 function PieceOfArt(props) {
   const handleClick = (e) => {
     e.preventDefault();
@@ -57,7 +55,6 @@ function PieceOfArt(props) {
   );
 }
 
-// Fetches "Pieces of Art" and displays the fethed items in a card based UI
 function App() {
   const [items, setItems] = useState();
 
