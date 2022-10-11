@@ -62,13 +62,15 @@ function App() {
   const [items, setItems] = useState();
 
   const pieceOfArtType = "http://example.com/PieceOfArt";
+
   // Obtain the entries' data by utilising Entry::projection with the following projection:
+  // Projection
+  // Note that the projection URLs below denote the data keys of the Entry mentioned in the background
   const pieceOfArtProjection = {
     title: "http://purl.org/dc/terms/title",
     description: "http://purl.org/dc/terms/description",
     imgSrc: "http://xmlns.com/foaf/0.1/img",
     artist: "http://example.com/artist",
-    type: "http://example.com/PieceOfArt",
   };
 
   useEffect(() => {
