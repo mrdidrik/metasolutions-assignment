@@ -2,39 +2,32 @@ import React, { useEffect, useState } from "react";
 import ReactDOM from 'react-dom';
 import { EntryStore } from '@entryscape/entrystore-js';
 
-const baseURI = "https://recruit.entryscape.net/store";
-const context = "1";
-var entrystore = new EntryStore(baseURI);
+const es_config = {
+  baseURI: "https://recruit.entryscape.net/store", // EntryStore instance
+  context: "1",
+}
+var es = new EntryStore(es_config.baseURI);
 
 ReactDOM.render(
   <App />,
   document.getElementById('app')
 );
 
+// Fetches the artist name and displays it
 function Artist(props) {
   const [givenName, setGivenName] = useState();
   const [familyName, setFamilyName] = useState();
 
-  // useEffect(() => {
-  //   var artistEntryId = entrystore.getEntryId(props.resourceURI);
-  //   var artistEntryURI = entrystore.getEntryURI(context, artistEntryId)
-  //   entrystore.getEntry(artistEntryURI).then(function(artistEntry) {
-  //     setGivenName(artistEntry.getMetadata().findFirstValue(props.resourceURI, "foaf:givenName"))
-  //     setFamilyName(artistEntry.getMetadata().findFirstValue(props.resourceURI, "foaf:familyName"));
-  //   });
-  // }, []);
-
   useEffect(() => {
-
     const fetchData = async () => {
       try {
-        var artistEntryId = entrystore.getEntryId(props.resourceURI);
-        var artistEntryURI = entrystore.getEntryURI(context, artistEntryId)
-        const artistEntry = await entrystore.getEntry(artistEntryURI);
+        var artistEntryId = es.getEntryId(props.resourceURI);
+        var artistEntryURI = es.getEntryURI(es_config.context, artistEntryId)
+        const artistEntry = await es.getEntry(artistEntryURI);
         setGivenName(artistEntry.getMetadata().findFirstValue(props.resourceURI, "foaf:givenName"))
         setFamilyName(artistEntry.getMetadata().findFirstValue(props.resourceURI, "foaf:familyName"));
       } catch (error) {
-        console.log("Error: ", error);
+        console.log(error);
       }
     };
 
@@ -43,57 +36,58 @@ function Artist(props) {
 
   return (
     <h6 className="card-subtitle mb-2 text-muted">{givenName} {familyName}</h6>
-    // <div>
-    //     <p>Artist: {givenName} {familyName}</p>
-    // </div>
   );
 }
 
+// Shows a piece of art with image and info
 function PieceOfArt(props) {
+  const handleClick = (e) => {
+    e.preventDefault();
+    window.location.href = props.imgSrc;
+  }
   return (
-    <div className="card" style={{width: '18rem'}}>
-      <a href={props.imgSrc}>
-        <img className="card-img-top" src={props.imgSrc} alt={props.title}></img>
-      </a>
+    <div className="card" style={{width: '18rem'}} onClick={handleClick}>
+      <img className="card-img-top" src={props.imgSrc} alt={props.title}></img>
       <div className="card-body">
         <h5 className="card-title">{props.title}</h5>
-        {/*<a href={props.artist}>*/}
         <Artist resourceURI={props.artist} />
-        {/*</a>*/}
-        {/*<p className="card-text">Artist resourceURI: {props.artist}</p>*/}
+        <p className="card-text">{props.description}</p>
       </div>
     </div>
   );
 }
 
-
+// Fetches "Pieces of Art" and displays the fethed items in a card based UI
 function App() {
-  const [listItems, setListItems] = useState();
+  const [items, setItems] = useState();
+
   const pieceOfArtType = "http://example.com/PieceOfArt";
-  const projection = {
-   title: "http://purl.org/dc/terms/title",
-   description: "http://purl.org/dc/terms/description",
-   imgSrc: "http://xmlns.com/foaf/0.1/img",
-   artist: "http://example.com/artist",
+  // Obtain the entries' data by utilising Entry::projection with the following projection:
+  const pieceOfArtProjection = {
+    title: "http://purl.org/dc/terms/title",
+    description: "http://purl.org/dc/terms/description",
+    imgSrc: "http://xmlns.com/foaf/0.1/img",
+    artist: "http://example.com/artist",
+    type: "http://example.com/PieceOfArt",
   };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        var searchList = entrystore.newSolrQuery().context(context).rdfType(pieceOfArtType).list();
+        var searchList = es.newSolrQuery().context(es_config.context).rdfType(pieceOfArtType).list();
         const results = await searchList.getEntries();
-        setListItems(results.map((result) => {
-            var proj = result.projection(projection);
-            return <PieceOfArt key={proj.title} imgSrc={proj.imgSrc} title={proj.title} artist={proj.artist} />
-          }
-        ));
+        setItems(results.map((result) => {
+
+          var proj = result.projection(pieceOfArtProjection);
+          return <PieceOfArt key={proj.title} imgSrc={proj.imgSrc} title={proj.title} artist={proj.artist} description={proj.description} />
+        }));
       } catch (error) {
-        console.log("Error: ", error);
+        console.log(error);
       }
     };
 
     fetchData();
   }, []);
 
-  return <div className="card-group">{listItems}</div>
+  return <div className="card-group">{items}</div>
 }
