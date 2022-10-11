@@ -1,6 +1,6 @@
 ## Summary
-Fetches Pieces of Art from the [EntryStore API[(https://recruit.entryscape.net/store) using the [entrystore.js client library](https://bitbucket.org/metasolutions/entrystore.js/src/develop/) and displays them on a single web page.
-Shows a (Bootstrap) card based UI for the Pieces of Art with it's image, title, artist name and description.
+Fetches "Pieces of Art" from the [EntryStore API](https://recruit.entryscape.net/store) using the [EntryStore.js](https://bitbucket.org/metasolutions/entrystore.js/src/develop/) client library and displays them on a single web page.
+Shows a (Bootstrap) card based UI with showing the Pieces of Art with their image, title, artist and description.
 
 
 ## Installation
